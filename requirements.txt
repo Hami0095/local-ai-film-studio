@@ -1,0 +1,25 @@
+# Local AI Film Studio - pinned, tested together on 2026-11-03 (Machine A, RTX 4050, Windows 11).
+#
+# PyTorch is installed FIRST and SEPARATELY from the CUDA 12.8 index (RTX 5080 / Blackwell sm_120
+# needs cu128 wheels; they also cover sm_89 on the RTX 4050):
+#
+#   uv pip install torch==2.8.0+cu128 --index-url https://download.pytorch.org/whl/cu128
+#   uv pip install -r requirements.txt
+#
+# (The deploy/ scripts do both.)  requirements.lock.txt is the full frozen environment.
+diffusers==0.36.0          # Wan2.2 support; 0.35.x has broken VAE tiling for the Wan2.2 VAE (tests/test_vae_tiling.py)
+transformers==4.56.2       # UMT5EncoderModel; pre-5.x API, tested with diffusers 0.36.0
+accelerate==1.10.1         # enable_model_cpu_offload / sequential offload hooks
+huggingface_hub==0.35.3
+hf_xet==1.1.10             # fast downloads from Xet-backed HF repos (Wan-AI repos are Xet-enabled)
+safetensors==0.6.2
+sentencepiece==0.2.1
+protobuf==6.32.1
+ftfy==6.3.1                # Wan prompt cleaning
+regex
+imageio==2.37.0
+imageio-ffmpeg==0.6.0      # bundled static ffmpeg fallback if no system ffmpeg
+numpy==2.2.6
+pillow==11.3.0
+psutil==7.1.0
+packaging==26.3            # version guard in engine

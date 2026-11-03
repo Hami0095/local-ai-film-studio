@@ -1,0 +1,9 @@
+{
+  "title": "astronaut_demo",
+  "defaults": {"duration": 5, "seed": 42},
+  "shots": [
+    {"id": "s01_wide", "prompt": "A lone astronaut in a realistic white space suit walks slowly through an abandoned futuristic city at night, rain falling, neon reflections on wet streets, cinematic wide shot, slow dolly forward."},
+    {"id": "s02_close", "prompt": "Close-up of an astronaut's helmet visor reflecting pink and blue neon signs, raindrops running down the glass, shallow depth of field, cinematic lighting.", "seed": 7},
+    {"id": "s03_sky", "prompt": "Low-angle shot looking up between broken skyscrapers at a massive spaceship hovering in a stormy night sky, rain and fog, epic science-fiction film aesthetic.", "seed": 11}
+  ]
+}

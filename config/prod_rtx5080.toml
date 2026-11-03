@@ -1,0 +1,46 @@
+# Production profile - Machine B: NVIDIA RTX 5080 16 GB (Blackwell, sm_120)
+# Model: Wan2.2 TI2V-5B (official Diffusers weights, Apache-2.0)
+profile = "prod_rtx5080"
+
+[model]
+backend  = "wan"
+repo_id  = "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
+revision = "b8fff7315c768468a5333511427288870b2e9635"   # pinned commit; identical bytes on every machine
+local_dir = "models/Wan2.2-TI2V-5B-Diffusers"           # relative to project root; absolute paths / %VARS% allowed
+
+[device]
+gpu_index = 0
+expect_gpu_name = "5080"
+strict_gpu_check = false   # set true to refuse running on any other GPU
+
+[precision]
+transformer  = "bfloat16"  # 5B params -> ~10 GB
+text_encoder = "bfloat16"  # umT5-XXL encoder -> ~11.4 GB
+vae          = "float32"   # 2.8 GB; fp32 recommended by Wan/Diffusers for clean decoding
+
+[memory]
+# 16 GB cannot hold transformer + text encoder (~21 GB) at once, so "model" offload keeps exactly
+# one component on the GPU at a time. Peak VRAM is the transformer + 720p/121-frame activations.
+# If that still OOMs, the engine escalates: group (leaf-level, CUDA streams) -> sequential,
+# then 960x544, 832x480 ... (oom_fallback = true).
+offload = "model"
+vae_tiling = true
+oom_fallback = true
+group_offload_to_disk = ""   # e.g. "D:/offload_cache" if Machine B has < 32 GB system RAM
+attention = "sdpa"
+
+[generation]
+width  = 1280      # Wan2.2-5B native 720p (use 704x1280 for portrait)
+height = 704
+num_frames = 121   # 5.04 s @ 24 fps (model's trained maximum)
+fps   = 24
+steps = 50
+guidance_scale = 5.0
+seed = 42
+max_frames = 121
+
+[output]
+video_dir  = "outputs/videos"
+frames_dir = "outputs/frames"
+crf = 18
+preset = "slow"

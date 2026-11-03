@@ -1,0 +1,43 @@
+# Development profile - Machine A: NVIDIA RTX 4050 Laptop 6 GB
+# Uses a tiny RANDOM-WEIGHT pipeline with the real Wan2.2 classes/tokenizer/scheduler,
+# so the full code path runs on the GPU in seconds without the 34 GB download.
+# Output is coloured noise by design.
+profile = "dev_rtx4050"
+
+[model]
+backend  = "tiny"
+repo_id  = "Wan-AI/Wan2.2-TI2V-5B-Diffusers"
+revision = "b8fff7315c768468a5333511427288870b2e9635"
+local_dir = "models/Wan2.2-TI2V-5B-Diffusers"   # only tokenizer + *.json configs needed for tiny backend
+
+[device]
+gpu_index = 0
+expect_gpu_name = "4050"
+strict_gpu_check = false
+
+[precision]
+transformer  = "bfloat16"
+text_encoder = "bfloat16"
+vae          = "float32"
+
+[memory]
+offload = "none"
+vae_tiling = false
+oom_fallback = true
+attention = "sdpa"
+
+[generation]
+width  = 320
+height = 192
+num_frames = 25
+fps   = 24
+steps = 8
+guidance_scale = 5.0
+seed = 42
+max_frames = 121
+
+[output]
+video_dir  = "outputs/videos"
+frames_dir = "outputs/frames"
+crf = 18
+preset = "medium"

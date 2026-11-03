@@ -1,0 +1,15 @@
+TITLE: The Last Signal
+STYLE: cinematic wide-angle composition, realistic atmospheric lighting, anamorphic 35mm film look, rain, neon, dramatic science-fiction film aesthetic, smooth camera movement
+SEED: 100
+DURATION: 5
+
+# Each paragraph below = one 5-second shot. Describe what the camera SEES.
+# Repeat the character's look in every shot - the model has no memory between shots.
+
+A lone astronaut wearing a realistic white space suit walks slowly through an abandoned futuristic city at night, rain falling through broken skyscrapers, neon lights reflecting on the wet streets, slow dolly forward.
+
+Close-up of the astronaut's helmet visor in a white space suit, reflecting pink and blue neon signs, raindrops running down the glass, shallow depth of field.
+
+The astronaut in a white space suit stops at an intersection and looks up, camera tilting up between broken skyscrapers to reveal a massive spaceship hovering in the stormy night sky.
+
+Wide aerial shot of the flooded neon city at night, the tiny white figure of the astronaut walking alone down an empty avenue, the giant spaceship's lights sweeping through the rain.

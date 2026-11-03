@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+models/*
+!models/.gitkeep
+outputs/videos/*
+!outputs/videos/.gitkeep
+outputs/frames/*
+!outputs/frames/.gitkeep
+logs/*
+!logs/.gitkeep
+config/*.local.toml
+reports/hardware_audit_*
+reports/first_movie_validation.json
