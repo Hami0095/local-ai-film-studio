@@ -88,6 +88,37 @@ class OutputConfig:
 
 
 @dataclass
+class ImageConfig:
+    """Keyframe stills for the `episode` pipeline (character consistency via image-to-video)."""
+    backend: str = "flux"  # "flux" (FLUX.1-schnell) | "wan" (Wan2.2 single-frame T2I, no extra download) | "tiny"
+    repo_id: str = "black-forest-labs/FLUX.1-schnell"
+    revision: str = "741f7c3ce8b383c54771c7003378a50191e9efe9"
+    local_dir: str = "models/FLUX.1-schnell"
+    steps: int = 4  # schnell is distilled for 1-4 steps
+    offload: str = "group"  # "group" (leaf-level) | "sequential"; the 24 GB transformer never fits in 16 GB
+
+
+@dataclass
+class AudioConfig:
+    """Dialogue (Kokoro TTS), music (ACE-Step), SFX and mix settings for the `episode` pipeline."""
+    tts_backend: str = "kokoro"  # "kokoro" | "tiny" (tones of the estimated speech length)
+    tts_repo_id: str = "hexgrad/Kokoro-82M"
+    tts_revision: str = "f3ff3571791e39611d31c381e3a41a3af07b4987"
+    tts_local_dir: str = "models/Kokoro-82M"
+    tts_device: str = "cuda"  # 82M params: "cpu" also works
+    music_backend: str = "acestep"  # "acestep" | "tiny" (procedural)
+    music_repo_id: str = "ACE-Step/ACE-Step-v1-3.5B"
+    music_revision: str = "82cd0d7b6322bd28cd4e830fe675ddb6180ce36c"
+    music_local_dir: str = "models/ACE-Step-v1-3.5B"
+    music_python: str = ""  # interpreter of the separate ACE-Step venv; "" = .venv-audio next to the project
+    music_steps: int = 60
+    sample_rate: int = 48000
+    target_lufs: float = -14.0  # TikTok / YouTube Shorts loudness
+    true_peak_db: float = -1.0
+    duck_db: float = -12.0  # music under dialogue
+
+
+@dataclass
 class StudioConfig:
     profile: str = "prod_rtx5080"
     model: ModelConfig = field(default_factory=ModelConfig)
@@ -96,6 +127,8 @@ class StudioConfig:
     memory: MemoryConfig = field(default_factory=MemoryConfig)
     generation: GenerationConfig = field(default_factory=GenerationConfig)
     output: OutputConfig = field(default_factory=OutputConfig)
+    image: ImageConfig = field(default_factory=ImageConfig)
+    audio: AudioConfig = field(default_factory=AudioConfig)
     source_file: str = ""
 
     def resolve(self, p: str) -> Path:
@@ -131,10 +164,16 @@ def load_config(path: str | os.PathLike | None = None) -> StudioConfig:
         memory=_fill(MemoryConfig, raw.get("memory", {})),
         generation=_fill(GenerationConfig, raw.get("generation", {})),
         output=_fill(OutputConfig, raw.get("output", {})),
+        image=_fill(ImageConfig, raw.get("image", {})),
+        audio=_fill(AudioConfig, raw.get("audio", {})),
         source_file=str(path),
     )
     if cfg.memory.offload not in {"none", "model", "group", "sequential"}:
         raise ValueError(f"memory.offload must be none|model|group|sequential, got {cfg.memory.offload!r}")
     if cfg.model.backend not in {"wan", "tiny"}:
         raise ValueError(f"model.backend must be wan|tiny, got {cfg.model.backend!r}")
+    if cfg.image.backend not in {"flux", "wan", "tiny"}:
+        raise ValueError(f"image.backend must be flux|wan|tiny, got {cfg.image.backend!r}")
+    if cfg.audio.tts_backend not in {"kokoro", "tiny"} or cfg.audio.music_backend not in {"acestep", "tiny"}:
+        raise ValueError("audio.tts_backend must be kokoro|tiny and audio.music_backend acestep|tiny")
     return cfg

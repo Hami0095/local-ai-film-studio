@@ -44,3 +44,29 @@ video_dir  = "outputs/videos"
 frames_dir = "outputs/frames"
 crf = 18
 preset = "slow"
+
+# ---- `episode` pipeline (keyframes -> image-to-video, TTS, music, SFX, mix) ----
+[image]
+backend  = "flux"   # flux (FLUX.1-schnell, gated: free HF login) | wan (Wan2.2 single-frame, no extra download) | tiny
+repo_id  = "black-forest-labs/FLUX.1-schnell"
+revision = "741f7c3ce8b383c54771c7003378a50191e9efe9"
+local_dir = "models/FLUX.1-schnell"
+steps = 4
+offload = "group"
+
+[audio]
+tts_backend = "kokoro"
+tts_repo_id = "hexgrad/Kokoro-82M"
+tts_revision = "f3ff3571791e39611d31c381e3a41a3af07b4987"
+tts_local_dir = "models/Kokoro-82M"
+tts_device = "cuda"
+music_backend = "acestep"   # acestep runs in its own venv (.venv-audio): its pins clash with diffusers 0.36
+music_repo_id = "ACE-Step/ACE-Step-v1-3.5B"
+music_revision = "82cd0d7b6322bd28cd4e830fe675ddb6180ce36c"
+music_local_dir = "models/ACE-Step-v1-3.5B"
+music_python = ""
+music_steps = 60
+sample_rate = 48000
+target_lufs = -14.0
+true_peak_db = -1.0
+duck_db = -12.0

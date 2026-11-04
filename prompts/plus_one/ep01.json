@@ -1,0 +1,136 @@
+{
+  "title": "plus_one_ep01",
+  "display_title": "PLUS ONE - Episode 1: \"Summon Protocol\"",
+  "fps": 24,
+  "output": {"width": 1080, "height": 1920, "tail_s": 0.5},
+  "seed": 1000,
+  "captions": true,
+  "style": "photorealistic, cinematic 35mm film look, shallow depth of field, soft natural light, subtle film grain, vertical 9:16 composition, comedy series",
+  "negative_extra": "text, letters, subtitles, watermark, logo, distorted face, extra fingers",
+  "characters": {
+    "sam":   {"name": "SAM",      "look": "Sam, a 27-year-old man with short messy dark-brown hair, light stubble and tired brown eyes, wearing a plain grey hoodie and a thin gold wedding ring",
+              "voice": "am_michael", "speed": 1.0, "gain_db": 0.0},
+    "clone": {"name": "CLONE #1", "look": "Sam's clone, an identical 27-year-old man with neatly styled dark-brown hair, light stubble and a confident smirk, wearing a bright red hoodie",
+              "voice": "am_fenrir", "speed": 0.94, "gain_db": 0.0},
+    "lena":  {"name": "LENA",     "look": "Lena, a 28-year-old woman with shoulder-length auburn hair and calm, sharp green eyes, wearing an elegant dark-green dress",
+              "voice": "af_heart", "speed": 0.95, "gain_db": -2.0},
+    "mark":  {"name": "MARK",     "look": "Mark, a heavyset 50-year-old boss with a shaved head, a thick grey beard, a loud patterned shirt and a loosened tie",
+              "voice": "am_puck", "speed": 1.1, "gain_db": 2.0}
+  },
+  "stills": {
+    "s10_photo": {"prompt": "Phone photo of an empty chair at a candle-lit restaurant table, a small birthday cake with one lit candle in front of the empty chair, warm evening light, realistic smartphone photo", "seed": 77}
+  },
+  "shots": [
+    {"id": "s01", "start": 0, "end": 3, "title": "Sam at desk",
+     "keyframe": "Medium close-up of {sam} sitting at a desk in a modern open-plan Amsterdam office, looking straight into the camera lens with a dry deadpan expression, mouth closed, laptop and coffee mug on the desk, blurred coworkers and canal-house windows behind him",
+     "motion": "{sam} looks straight into the camera with a deadpan expression and slowly raises one eyebrow, mouth closed, blurred coworkers move in the background, static camera",
+     "dialogue": [{"who": "sam", "at": 0.2, "text": "Nobody tells you your clone can get a promotion."}],
+     "sfx": [{"name": "office_hum", "at": 0, "dur": 3.0, "gain_db": -30}]},
+
+    {"id": "s02", "start": 3, "end": 7, "title": "Phone insert",
+     "keyframe": "Top-down insert shot of a black smartphone lying face-up on a light wooden office desk next to a keyboard and a coffee mug, the phone screen dark and blank, shallow depth of field",
+     "motion": "The smartphone on the desk vibrates and its blank screen lights up softly, static top-down camera",
+     "overlays": [{"type": "message", "sender": "Lena", "text": "Dinner at 7. It's my birthday. Don't be late.", "at": 0.35, "dur": 3.5, "position": "center"}],
+     "sfx": [{"name": "phone_buzz", "at": 0.3, "gain_db": -10}, {"name": "office_hum", "at": 0, "dur": 4.0, "gain_db": -32}]},
+
+    {"id": "s03", "start": 7, "end": 12, "title": "Boss enters",
+     "keyframe": "Over-the-shoulder shot from behind {sam} seated at his office desk, in the background {mark} strides toward the desk pointing at him enthusiastically, modern Amsterdam office",
+     "motion": "{mark} marches up to the desk, pointing and talking loudly with big gestures, {sam} slumps slightly in the foreground, static over-the-shoulder camera",
+     "dialogue": [{"who": "mark", "at": 0.35, "text": "Adler, the Hartmann account review is at 7. You're leading it.", "say": "Adler! The Hartmann account review is at seven. You're leading it!"}]},
+
+    {"id": "s04a", "start": 12, "end": 13, "title": "Ring",
+     "keyframe": "Extreme close-up of a man's hand resting on an office desk, a thin gold wedding ring on his ring finger catching the light, grey hoodie sleeve",
+     "motion": "The fingers turn the gold wedding ring once, a tiny glint of light flashes on the ring, slow push-in",
+     "dialogue": [{"who": "sam", "at": 0.35, "text": "Okay. Clone up.", "mode": "whisper"}],
+     "sfx": [{"name": "ring_clink", "at": 0.15, "gain_db": -12}]},
+
+    {"id": "s04b", "start": 13, "end": 14, "title": "Summon face",
+     "keyframe": "Tight close-up of {sam}'s face, eyes closed in concentration, determined expression, a faint blue glow on his skin, dim office light",
+     "motion": "{sam} squeezes his eyes shut in concentration as a blue glow grows on his face, slow push-in"},
+
+    {"id": "s05", "start": 14, "end": 17, "title": "Clone materializes",
+     "keyframe": "Medium shot in a modern office: a burst of bright blue light and anamorphic lens flare where {clone} has just appeared, standing next to an empty office chair, blue sparks fading in the air",
+     "motion": "{clone} appears out of a flash of blue light with lens flare, brushes off his red hoodie and looks around, bored and unimpressed, slow push-in",
+     "post": {"flash": {"color": [120, 170, 255], "at": 0.0, "dur": 0.6}},
+     "dialogue": [{"who": "clone", "at": 0.85, "text": "Oh, we're doing this again."}],
+     "sfx": [{"name": "whoosh", "at": 0.0, "gain_db": -8}, {"name": "bass_hit", "at": 0.05, "gain_db": -6}]},
+
+    {"id": "s06", "start": 17, "end": 21, "title": "Clone walks to meeting",
+     "keyframe": "Tracking shot through a glass meeting-room wall: {clone} walking confidently down a bright office corridor with long strides and a smirk, holding a laptop",
+     "motion": "{clone} walks confidently with long strides and a smirk past the glass wall, the camera tracks alongside him, he opens a glass door",
+     "dialogue": [{"who": "sam", "at": 0.15, "mode": "vo", "text": "Clone #1 is the reliable one. Reliable means he never gets tired of being better than me.",
+                   "say": "Clone number one is the reliable one. Reliable means he never gets tired of being better than me."}],
+     "sfx": [{"name": "footsteps", "at": 0.0, "dur": 3.5, "gain_db": -18}, {"name": "door_click", "at": 3.6, "gain_db": -14}]},
+
+    {"id": "s07", "start": 21, "end": 25, "title": "Presentation",
+     "keyframe": "Meeting room with large windows: {clone} presenting confidently next to a big hand-drawn chart on a flip chart with a line shooting steeply upward, {mark} sitting at the table grinning with delight, coworkers watching",
+     "motion": "{clone} taps the hand-drawn chart with a marker, {mark} jumps up from his chair and applauds enthusiastically, coworkers nod",
+     "post": {"punch": [[0.0, 1.0, 0.5, 0.5], [0.9, 1.45, 0.55, 0.42], [1.8, 1.2, 0.42, 0.55], [2.7, 1.6, 0.6, 0.45]]},
+     "dialogue": [{"who": "mark", "at": 2.45, "text": "Finally, someone with energy!"}],
+     "sfx": [{"name": "pen_tap", "at": 0.5, "gain_db": -14}, {"name": "applause", "at": 2.2, "dur": 1.8, "gain_db": -16}]},
+
+    {"id": "s08", "start": 25, "end": 28, "title": "Sam watches through glass",
+     "keyframe": "Wide shot of an office: in the foreground {sam} sits small at his desk with his face in his palm, behind him through a glass wall a meeting room celebration is visible",
+     "motion": "{sam} slowly sinks his face into his palm while people celebrate behind the glass wall, static wide camera",
+     "dialogue": [{"who": "sam", "at": 0.15, "mode": "vo", "text": "Here's the problem. Every time he's sharp, I get a little fuzzy."}],
+     "sfx": [{"name": "low_hum", "at": 0, "dur": 3.0, "gain_db": -26}]},
+
+    {"id": "s09", "start": 28, "end": 32, "title": "Memory fails",
+     "keyframe": "Close-up of {sam}'s face with a blank, empty stare and slightly unfocused eyes, cool desaturated office light",
+     "motion": "{sam} stares blankly into space, then his eyes flicker with confusion, very slow push-in",
+     "post": {"flicker": {"at": 1.9, "dur": 0.45}},
+     "dialogue": [{"who": "sam", "at": 1.9, "mode": "vo", "text": "I can't remember where we had our first date anymore."}],
+     "sfx": [{"name": "static_tone", "at": 1.9, "dur": 0.9, "gain_db": -22}]},
+
+    {"id": "s10", "start": 32, "end": 36, "title": "Lena's text",
+     "keyframe": "Close-up insert of a smartphone lying on a dark office desk in the evening, its screen glowing, the office empty and dim",
+     "motion": "The phone on the desk vibrates gently and its screen glow flickers, static camera",
+     "overlays": [{"type": "message", "sender": "Lena", "text": "Still coming? Or should I order for one?", "photo": "s10_photo", "at": 0.3, "dur": 3.6, "position": "center"}],
+     "sfx": [{"name": "phone_buzz", "at": 0.25, "gain_db": -16}]},
+
+    {"id": "s11", "start": 36, "end": 40, "title": "Promotion",
+     "keyframe": "Two-shot in a bright corner office with a canal view: {mark} shaking hands with {clone}, {clone} grinning smugly toward the camera",
+     "motion": "{mark} pats {clone} on the shoulder, talking excitedly, then {clone} turns to the camera and grins",
+     "dialogue": [{"who": "mark", "at": 0.3, "text": "You're getting the corner office."},
+                  {"who": "clone", "at": 2.35, "text": "Obviously.", "note": "to camera"}],
+     "sfx": [{"name": "laughter", "at": 2.7, "dur": 1.3, "gain_db": -20}]},
+
+    {"id": "s12", "start": 40, "end": 45, "title": "Restaurant reunion",
+     "keyframe": "Medium two-shot in a cosy Amsterdam restaurant at 9:40 pm with warm candle light: {lena} sitting at a table with a half-eaten birthday cake, looking quietly across the table at {sam}, a phone lying on the table, soft background bokeh",
+     "motion": "{lena} studies {sam} quietly across the table while he gives a tired smile, the candle flames flicker, the phone on the table lights up",
+     "dialogue": [{"who": "lena", "at": 0.2, "text": "You look different."},
+                  {"who": "sam", "at": 1.4, "text": "Long day."},
+                  {"who": "lena", "at": 2.65, "text": "Since when do you say 'babe'?"}],
+     "overlays": [{"type": "message", "sender": "Sam", "text": "Promotion done. Dinner's on me. Love you, babe.", "at": 2.0, "dur": 1.6, "position": "top"}],
+     "sfx": [{"name": "glasses_clink", "at": 0.9, "gain_db": -16}, {"name": "phone_buzz", "at": 2.0, "gain_db": -14}]}
+  ],
+  "end_card": {"start": 44.3, "end": 45.5, "title": "Plus One: Clone #2 Wants a Turn.", "subtitle": "Part 2 Tomorrow."},
+  "music": {
+    "episode": "plus_one_ep01_summon_protocol",
+    "duration_sec": 42,
+    "global": {
+      "key": "D minor / D major",
+      "tempo_bpm": 118,
+      "mix": "dialogue ducks music by -12dB; SFX on separate stem; 0.5s silence at end",
+      "vocals": "none",
+      "stems_requested": ["drums", "bass", "melody", "sfx"]
+    },
+    "cues": [
+      {"start": 0.0, "end": 3.0, "mood": "dry, confessional", "instruments": ["sparse bass pulse"], "notes": "Keep quiet so Sam's voice dominates"},
+      {"start": 3.0, "end": 7.0, "mood": "anxious, comic", "instruments": ["tight tick percussion"], "notes": "Sitcom timing for the phone buzz"},
+      {"start": 7.0, "end": 12.0, "mood": "authority, slightly cocky", "instruments": ["muted brass stab"], "notes": "Hit on Mark's line"},
+      {"start": 12.0, "end": 14.0, "mood": "tension build", "instruments": ["rising synth"], "notes": "2-second sweep, no melody"},
+      {"start": 14.0, "end": 17.0, "mood": "power, magic", "instruments": ["bass hit", "electric whoosh"], "notes": "Cinematic impact on the blue light flash"},
+      {"start": 17.0, "end": 25.0, "mood": "upbeat, confident montage", "instruments": ["funk bass", "drums", "horns"], "tempo_bpm": 118, "notes": "Horn punch on the chart reveal at 21s"},
+      {"start": 25.0, "end": 28.0, "mood": "sudden deflation", "instruments": ["bass only"], "notes": "Drop everything except bass for the realization"},
+      {"start": 28.0, "end": 36.0, "mood": "emotional, bittersweet", "instruments": ["soft piano", "warm strings"], "key": "D minor", "notes": "Strings swell on the held note at 32s"},
+      {"start": 36.0, "end": 40.0, "mood": "playful, cheeky", "instruments": ["pizzicato strings", "light brass"], "notes": "Comic relief after the emotional beat"},
+      {"start": 40.0, "end": 45.0, "mood": "cliffhanger", "instruments": ["piano", "string pad"], "notes": "End on an unresolved chord, hold 0.5s, then cut to silence"}
+    ],
+    "stingers": [
+      {"name": "brass_stab", "at": 7.3, "gain_db": -9},
+      {"name": "impact_hit", "at": 14.0, "gain_db": -6},
+      {"name": "horn_punch", "at": 21.0, "gain_db": -8}
+    ]
+  }
+}

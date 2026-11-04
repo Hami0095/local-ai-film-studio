@@ -31,6 +31,8 @@ PROD_REQUIREMENTS = {
     "min_compute_capability": (8, 0),
     "min_driver_major": 570,       # Blackwell + CUDA 12.8 wheels
 }
+# The `episode` pipeline adds FLUX.1-schnell (~34 GB), ACE-Step (8.3 GB) + its venv (~6 GB), Kokoro (0.4 GB)
+EPISODE_MIN_FREE_DISK_GB = 110.0
 
 PACKAGES = ["torch", "torchvision", "diffusers", "transformers", "accelerate", "huggingface_hub",
             "safetensors", "sentencepiece", "ftfy", "imageio", "imageio-ffmpeg", "numpy", "pillow",
@@ -183,6 +185,8 @@ def evaluate_for_production(a: dict[str, Any]) -> list[tuple[str, bool, str]]:
     rows.append((f"Free disk >= {r['min_free_disk_gb']} GB (or model already present)", a["disk_free_gb"] >= r["min_free_disk_gb"],
                  f"{a['disk_free_gb']} GB at {a['disk_path']}"))
     drv = a["nvidia_smi"][0]["driver"] if a["nvidia_smi"] else "0"
+    rows.append((f"Free disk >= {EPISODE_MIN_FREE_DISK_GB:.0f} GB for the episode pipeline (optional)",
+                 a["disk_free_gb"] >= EPISODE_MIN_FREE_DISK_GB, f"{a['disk_free_gb']} GB"))
     rows.append((f"NVIDIA driver >= {r['min_driver_major']}", int(drv.split(".")[0]) >= r["min_driver_major"], drv))
     rows.append(("FFmpeg available", not a["ffmpeg"].startswith("not available"), a["ffmpeg"][:60]))
     return rows

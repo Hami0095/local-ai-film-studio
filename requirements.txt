@@ -23,3 +23,9 @@ numpy==2.2.6
 pillow==11.3.0
 psutil==7.1.0
 packaging==26.3            # version guard in engine
+# ---- `episode` pipeline (dialogue TTS + audio I/O); music runs in .venv-audio (requirements-audio.txt) ----
+kokoro==0.9.4              # Kokoro-82M TTS (Apache-2.0)
+misaki[en]==0.9.4          # Kokoro's English G2P (spaCy + espeak-ng fallback, bundled via espeakng-loader)
+en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
+soundfile==0.13.1
+pytest==8.4.2              # tests/

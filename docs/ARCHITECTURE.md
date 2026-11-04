@@ -20,6 +20,21 @@ idea ──► [1 Screenplay LLM] ──► screenplay.md
 [9 Assembly: ffmpeg concat/xfade + audio mix + loudness] ──► film.mp4   (concat exists today: src/pipeline/shotlist.py)
 ```
 
+## Status (2026-11-04): stages 3 and 6-10 now exist as the `episode` pipeline
+
+`python main.py episode <episode.json>` (`src/pipeline/episode.py`) implements most of the diagram for a hand-written episode spec:
+
+| Stage | Module | Model / method |
+|---|---|---|
+| Character consistency | `src/generation/keyframes.py` | FLUX.1-schnell keyframe per shot from locked character descriptions, then Wan2.2 I2V (fallback: Wan single-frame) |
+| Dialogue | `src/audio/tts.py` | Kokoro-82M, lines fitted to the timeline (auto speed-up up to 15 %) |
+| Music | `src/audio/music.py`, `ace_worker.py` | ACE-Step v1 3.5B per cue in a separate venv; procedural fallback |
+| SFX | `src/audio/sfx.py` | numpy synthesis, overridable with `assets/sfx/<name>.wav` |
+| Post / text | `src/post/overlays.py` | phone messages, captions, end card drawn with Pillow; flash / flicker / punch-in cuts |
+| Mix / master | `src/audio/mix.py` | exact ducking from line timings, two-pass loudnorm to -14 LUFS |
+
+Still open: stage 1-2 (screenplay LLM that writes the episode JSON), lip-sync (e.g. Wan2.2-S2V), and identity conditioning stronger than shared prompts (LoRA / IP-Adapter).
+
 ## The shot list contract
 
 `prompts/example_shotlist.json` is the seed format. Later stages add fields to it instead of inventing new formats:

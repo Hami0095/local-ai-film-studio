@@ -119,6 +119,74 @@ Wan2.2 only generates pictures:
 
 Budget about 11–17 minutes per shot on the RTX 5080 at 720p (estimate).
 
+### Episodes: a finished 9:16 short with voices, music and SFX
+
+`python main.py episode <episode.json>` makes a finished vertical short with dialogue, music, sound effects, on-screen text and captions. The first episode is [prompts/plus_one/ep01.json](prompts/plus_one/ep01.json) ("Plus One – Summon Protocol", 45 s), converted by hand from the script.
+
+**One-time setup on Machine B:**
+
+```powershell
+# FLUX.1-schnell is gated with automatic approval: accept the licence at
+# https://huggingface.co/black-forest-labs/FLUX.1-schnell, then log in once:
+.venv\Scripts\hf.exe auth login
+powershell -ExecutionPolicy Bypass -File deploy\setup_machine_b.ps1 -Episode -SkipFirstVideo
+```
+
+This downloads and verifies the following, then runs a dry run:
+
+- Kokoro-82M (0.4 GB)
+- ACE-Step v1 (8.3 GB), in its own `.venv-audio`
+- FLUX.1-schnell (about 34 GB)
+
+You need about 110 GB of free disk including the Wan weights. Without a Hugging Face login, add `--image-backend wan` to make the keyframes with Wan2.2 instead. That needs no extra download, but the stills are lower quality.
+
+**Render:**
+
+```powershell
+python main.py episode prompts\plus_one\ep01.json --dry-run                    # timeline, dialogue fit, estimate
+python main.py episode prompts\plus_one\ep01.json --stop-after keyframes --open # look at the stills first (~15 min)
+python main.py episode prompts\plus_one\ep01.json --reseed s05                  # don't like shot 5's still? new seed
+python main.py episode prompts\plus_one\ep01.json --open                        # everything else (~2.5-3.5 h, estimate)
+```
+
+**Stages:**
+
+1. `tts`
+2. `keyframes`
+3. `shots`
+4. `music`
+5. `picture`
+6. `mix`
+7. `final`
+
+Every stage is cached. A re-run only redoes what changed, so after editing one line of dialogue only the TTS, the picture (captions) and the mix are rebuilt.
+
+**Outputs** go to `outputs/videos/plus_one_ep01/`:
+
+- `plus_one_ep01_final.mp4`: 1080×1920, 24 fps, H.264 + AAC, -14 LUFS.
+- A JSON report.
+- The keyframe contact sheet.
+- Per-shot clips.
+- `audio/stem_{dialogue,music,sfx}.wav`, for re-editing in any editor.
+
+**Episode JSON format:**
+
+- **`characters`:** a locked `look` for each character, inserted wherever a prompt says `{sam}`, plus a Kokoro `voice`, `speed` and `gain_db`.
+- **`shots`:** each shot has:
+  - `start` / `end` (at most 5 s)
+  - a `keyframe` prompt for the still and a `motion` prompt for the animation
+  - `dialogue`: `who`, `at` (seconds into the shot), `text` (the caption), optional `say` (the spoken form) and `mode` (`oncam`, `vo` or `whisper`)
+  - `sfx`
+  - `overlays`: phone `message` cards
+  - `post` effects: `flash`, `flicker`, or `punch`-in cuts
+- **`music`:** the cue sheet. `stingers` are SFX placed on exact beats.
+
+**Limits:**
+
+- **No lip-sync.** On-camera lines play over generic motion, and the prompts are written to keep mouths out of focus.
+- **Faces can still drift between shots.** Use `--reseed ID` on the bad shot.
+- **The built-in SFX are synthesised.** Drop recordings at `assets/sfx/<name>.wav` (for example CC0 recordings) to replace them.
+
 ### Python API
 
 ```python
@@ -164,7 +232,8 @@ prompts/ reports/ docs/ tests/ outputs/ models/ logs/
 
 - **No real-model video has been generated yet.** Machine A cannot hold the 34 GB weights, and only Machine B can produce the real first video. The production loading path (`from_pretrained` with the real weights, model offload at 720p) follows the documented Diffusers usage. The same code ran on Machine A with tiny weights, but has not run with real weights.
 - **Clip length:** 5 s maximum per clip (121 frames). Longer scenes need several shots or a last-frame-to-I2V continuation.
-- **No audio.** Wan generates video only.
+- **Audio comes from the `episode` pipeline only.** Wan itself generates video only. `generate`, `shots` and `film` stay silent, and `episode` adds Kokoro dialogue, ACE-Step music and SFX.
+- **Episode stages only tested with stand-ins on Machine A.** FLUX.1-schnell keyframes and ACE-Step music have not run with real weights yet, because Machine A has no room for them. Machine A ran the stand-in backends (tiny or procedural) plus real Kokoro TTS. The first real run happens on Machine B.
 - **System RAM on Machine B is unknown.** Model offload keeps about 25 GB of weights in RAM. With less than 32 GB, expect swapping; `memory.group_offload_to_disk` can help.
 - **Prompt adherence and quality** are model-dependent. Automated validation proves the file is valid, non-blank and moving. Whether it shows *an astronaut in a rainy neon city* needs a human to look at the contact sheet.
 - **Fault injection:** the `STUDIO_TEST_STICKY_OOM=1` environment variable exists only to test the OOM retry path. Never set it in production.

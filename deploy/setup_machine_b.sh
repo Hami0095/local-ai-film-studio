@@ -4,6 +4,7 @@
 #   bash deploy/setup_machine_b.sh                       # full: deps, download, generate, validate
 #   MODEL_DIR=/data/models/Wan2.2-TI2V-5B-Diffusers bash deploy/setup_machine_b.sh
 #   SKIP_DOWNLOAD=1 bash deploy/setup_machine_b.sh       # weights already copied over
+#   EPISODE=1 bash deploy/setup_machine_b.sh             # + episode models (Kokoro, FLUX.1-schnell, ACE-Step venv)
 #   YES=1 ...                                            # no download confirmation prompt
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -41,6 +42,20 @@ $PY main.py "${ARGS[@]}"
 $PY main.py info
 $PY tests/test_basics.py
 $PY tests/test_vae_tiling.py
+
+if [ -n "${EPISODE:-}" ]; then
+  step "Episode models: Kokoro-82M, FLUX.1-schnell (gated: accept licence + hf auth login), ACE-Step v1"
+  EA=(setup --models kokoro,acestep); [ -n "${SKIP_DOWNLOAD:-}" ] && EA+=(--verify-only); [ -n "${YES:-}" ] && EA+=(--yes)
+  $PY main.py "${EA[@]}"
+  FA=(setup --models flux_schnell); [ -n "${SKIP_DOWNLOAD:-}" ] && FA+=(--verify-only); [ -n "${YES:-}" ] && FA+=(--yes)
+  $PY main.py "${FA[@]}" || echo "WARNING: FLUX.1-schnell unavailable (gated). Use: main.py episode ... --image-backend wan"
+  step "ACE-Step venv (.venv-audio)"
+  [ -x .venv-audio/bin/python ] || uv venv .venv-audio --python 3.11
+  uv pip install --python .venv-audio/bin/python "torch==2.8.0+cu128" "torchaudio==2.8.0+cu128" "torchvision==0.23.0+cu128" --index-url https://download.pytorch.org/whl/cu128
+  uv pip install --python .venv-audio/bin/python -r requirements-audio.txt
+  .venv-audio/bin/python -c "import torch, acestep.pipeline_ace_step; assert torch.cuda.is_available(); print('ACE-Step OK')"
+  $PY main.py episode prompts/plus_one/ep01.json --dry-run
+fi
 
 [ -n "${SKIP_FIRST_VIDEO:-}" ] && exit 0
 step "5/7 First video"

@@ -5,6 +5,11 @@
       powershell -ExecutionPolicy Bypass -File deploy\setup_machine_b.ps1
       powershell -ExecutionPolicy Bypass -File deploy\setup_machine_b.ps1 -ModelDir "D:\models\Wan2.2-TI2V-5B-Diffusers"
       powershell -ExecutionPolicy Bypass -File deploy\setup_machine_b.ps1 -SkipDownload   # weights copied over already
+      powershell -ExecutionPolicy Bypass -File deploy\setup_machine_b.ps1 -Episode -SkipFirstVideo  # + episode models
+
+  -Episode also installs the `episode` pipeline: Kokoro TTS (0.36 GB), FLUX.1-schnell keyframes (~34 GB,
+  gated: accept the licence at https://huggingface.co/black-forest-labs/FLUX.1-schnell and run
+  `.venv\Scripts\hf.exe auth login` first), ACE-Step music (8.3 GB) in its own .venv-audio.
 
   Steps: preflight -> venv + pinned deps -> audit -> download + SHA-256 verify (34.2 GB)
          -> first video (astronaut prompt, 1280x704, 121 frames) -> ffprobe validation -> open MP4.
@@ -14,7 +19,8 @@ param(
     [string]$ModelDir = "",
     [switch]$SkipDownload,
     [switch]$SkipFirstVideo,
-    [switch]$Yes
+    [switch]$Yes,
+    [switch]$Episode
 )
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $PSScriptRoot
@@ -73,6 +79,32 @@ if (-not $?) { Fail "model download/verification failed - re-run this script to 
 & $Py tests\test_basics.py
 & $Py tests\test_vae_tiling.py
 if (-not $?) { Fail "VAE tiling regression test failed - check the diffusers version (needs 0.36.0)" }
+
+if ($Episode) {
+    Step "Episode models: Kokoro-82M (TTS), FLUX.1-schnell (keyframes), ACE-Step v1 (music)"
+    $epArgs = @("main.py", "setup", "--models", "kokoro,acestep")
+    if ($SkipDownload) { $epArgs += "--verify-only" }
+    if ($Yes) { $epArgs += "--yes" }
+    & $Py @epArgs
+    if (-not $?) { Fail "Kokoro/ACE-Step download or verification failed - re-run to resume" }
+    $fluxArgs = @("main.py", "setup", "--models", "flux_schnell")
+    if ($SkipDownload) { $fluxArgs += "--verify-only" }
+    if ($Yes) { $fluxArgs += "--yes" }
+    & $Py @fluxArgs
+    if (-not $?) {
+        Write-Host "WARNING: FLUX.1-schnell is not available (gated repo: accept the licence on its HF page and run" -ForegroundColor Yellow
+        Write-Host "  .venv\Scripts\hf.exe auth login). Until then use: main.py episode ... --image-backend wan" -ForegroundColor Yellow
+    }
+    Step "ACE-Step venv (.venv-audio; its pins clash with the video stack)"
+    if (-not (Test-Path .venv-audio\Scripts\python.exe)) { uv venv .venv-audio --python 3.11; if (-not $?) { Fail "uv venv .venv-audio failed" } }
+    uv pip install --python .venv-audio\Scripts\python.exe "torch==2.8.0+cu128" "torchaudio==2.8.0+cu128" "torchvision==0.23.0+cu128" --index-url https://download.pytorch.org/whl/cu128
+    if (-not $?) { Fail "torch install in .venv-audio failed" }
+    uv pip install --python .venv-audio\Scripts\python.exe -r requirements-audio.txt
+    if (-not $?) { Fail "ACE-Step install failed (needs git on PATH)" }
+    & .venv-audio\Scripts\python.exe -c "import torch, acestep.pipeline_ace_step; assert torch.cuda.is_available(); print('ACE-Step OK', torch.__version__)"
+    if (-not $?) { Fail "ACE-Step import/CUDA check failed" }
+    & $Py main.py episode prompts\plus_one\ep01.json --dry-run
+}
 
 if ($SkipFirstVideo) { Stop-Transcript | Out-Null; exit 0 }
 

@@ -1,0 +1,8 @@
+# Separate venv for ACE-Step music generation (.venv-audio) - Machine B only.
+# ACE-Step pins transformers==4.50.0 / accelerate==1.6.0, which conflict with the video stack in .venv.
+# torch/torchaudio/torchvision come from the CUDA 12.8 index first (RTX 5080 needs cu128), then:
+#   uv pip install --python .venv-audio/Scripts/python.exe -r requirements-audio.txt
+# Official repo (Apache-2.0), pinned commit:
+ace_step @ git+https://github.com/ace-step/ACE-Step@1bee4c9f5b43e30995f8d4d33b3919197ce1bd68
+diffusers==0.33.1          # ACE-Step v1 was written against diffusers 0.32-0.33; newer releases are untested with it
+numpy==2.2.6               # same numpy as the video venv (librosa/numba compatible)
